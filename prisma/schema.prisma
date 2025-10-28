@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  slug      String    @unique
+  title     String
+  excerpt   String
+  image     String?
+  date      DateTime  @default(now())
+  author    String
+  content   String
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  slug      String
+  name      String
+  text      String
+  createdAt DateTime @default(now())
+  post      Post?    @relation(fields: [slug], references: [slug])
+}
