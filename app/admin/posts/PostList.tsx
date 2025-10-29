@@ -11,6 +11,7 @@ interface PostListProps {
         author: string;
         date: Date;
         comments: { id: number; name: string; text: string; createdAt: Date }[];
+        categories: { id: number; name: string; }[];
     }[];
 }
 
@@ -30,17 +31,27 @@ export default function PostList({ posts }: PostListProps) {
                                 {new Date(post.date).toLocaleDateString()} • {post.author}
                             </p>
                         </div>
+                        <div className="flex flex-wrap gap-2">
+                            {post.categories?.map(cat => (
+                                <span
+                                    key={cat.id}
+                                    className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium"
+                                >
+                                    {cat.name}
+                                </span>
+                            ))}
+                        </div>
 
                         <div className="flex gap-3">
                             <Link
                                 href={`/blog/${post.slug}`}
-                                className="text-blue-600 hover:underline"
+                                className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
                             >
                                 View
                             </Link>
                             <Link
                                 href={`/admin/edit/${post.slug}`}
-                                className="text-yellow-600 hover:underline"
+                                className="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700"
                             >
                                 Edit
                             </Link>

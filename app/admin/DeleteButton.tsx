@@ -19,7 +19,7 @@ export function DeleteButton({ postId }: { postId: number }) {
     };
 
     return (
-        <button onClick={handleDelete} className="text-red-600 hover:underline">
+        <button onClick={handleDelete} className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
             Delete
         </button>
     );

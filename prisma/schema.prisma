@@ -8,15 +8,16 @@ datasource db {
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
-  slug      String    @unique
-  title     String
-  excerpt   String
-  image     String?
-  date      DateTime  @default(now())
-  author    String
-  content   String
-  comments  Comment[]
+  id         Int        @id @default(autoincrement())
+  slug       String     @unique
+  title      String
+  excerpt    String
+  image      String?
+  date       DateTime   @default(now())
+  author     String
+  content    String
+  comments   Comment[]
+  categories Category[] @relation("PostCategories")
 }
 
 model Comment {
@@ -26,4 +27,11 @@ model Comment {
   text      String
   createdAt DateTime @default(now())
   post      Post?    @relation(fields: [slug], references: [slug])
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  slug  String @unique
+  posts Post[] @relation("PostCategories")
 }

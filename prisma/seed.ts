@@ -52,6 +52,22 @@ async function main() {
     ],
   });
 
+  const categories = [
+    { name: 'Technology', slug: 'technology' },
+    { name: 'Lifestyle', slug: 'lifestyle' },
+    { name: 'Business', slug: 'business' },
+    { name: 'Programming', slug: 'programming' },
+    { name: 'Design', slug: 'design' },
+  ];
+
+  for (const cat of categories) {
+    await prisma.category.upsert({
+      where: { slug: cat.slug },
+      update: {},
+      create: cat,
+    });
+  }
+  
   console.log('✅ Database seeded successfully');
 }
 
