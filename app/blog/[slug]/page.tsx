@@ -1,15 +1,7 @@
+import { prisma } from "@/app/lib/prisma";
 import { notFound } from "next/navigation";
-import { marked } from "marked";
 import Image from "next/image";
 import Comments from "./comments";
-import { Post } from "@/types/post";
-import { Category } from "@/types/category";
-
-async function getPosts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`);
-  if (!res.ok) throw new Error("Failed to fetch posts");
-  return res.json();
-}
 
 export default async function PostPage({
   params,
@@ -17,42 +9,32 @@ export default async function PostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const data = await getPosts();
-  const posts = data.posts;
-  const post = posts.find((p: Post) => p.slug === slug);
+  const post = await prisma.post.findUnique({
+    where: { slug: slug },
+    include: {
+      categories: true,
+      comments: {
+        include: { author: { select: { name: true } } },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
 
   if (!post) return notFound();
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-10">
-      <h1 className="text-4xl font-extrabold mb-4">{post.title}</h1>
-      <p className="text-gray-500 mb-4">By {post.author}</p>
-      <div>
-        <Image
-          src={post.image?.trim() || "/images/placeholder.jpg"}
-          alt={post.title}
-          width={800}
-          height={400}
-          className="rounded-xl mb-6 shadow-md"
-        />
-      </div>
-      <div className="flex flex-wrap gap-2 mb-6">
-        {post.categories?.map((cat: Category) => (
-          <span
-            key={cat.id}
-            className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
-          >
-            {cat.name}
-          </span>
-        ))}
-      </div>
-      <article
-        className="prose lg:prose-lg max-w-none"
-        dangerouslySetInnerHTML={{ __html: marked(post.content) }}
+    <main className="max-w-3xl mx-auto p-6">
+      <Image
+        src={post.image || "/placeholder.png"}
+        alt={post.title}
+        width={800}
+        height={400}
+        className="rounded mb-6"
       />
-      <div className="mt-10">
-        <Comments slug={slug} />
-      </div>
+      <h1 className="text-4xl font-bold mb-3">{post.title}</h1>
+      <p className="text-gray-600 mb-4">{post.excerpt}</p>
+      <div className="prose mb-8">{post.content}</div>
+      <Comments postId={post.id} />
     </main>
   );
 }

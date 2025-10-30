@@ -1,9 +1,12 @@
 export interface Comment {
   id: number;
-  slug: string;
-  name: string;
-  text: string;
-  date: string;
+  content: string;
+  createdAt: Date;
+  postId: number;
+  authorId: number;
+  author: {
+    name: string | null;
+  };
 }
 
 export interface CommentFormData {
