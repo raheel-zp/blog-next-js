@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 
@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) throw new Error("Invalid password");
         
         return {
-          id: user.id.toString(),
+          id: Number(user.id),
           name: user.name,
           email: user.email,
           role: user.role,
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = Number(user.id);
         token.role = user.role;
       }
       return token;

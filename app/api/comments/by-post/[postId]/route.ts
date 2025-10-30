@@ -1,5 +1,5 @@
 // app/api/comments/by-post/[postId]/route.ts
-import { prisma } from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(

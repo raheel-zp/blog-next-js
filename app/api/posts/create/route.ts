@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/app/lib/prisma';
+import prisma from '@/lib/prisma';
 import { PostSchema } from '@/app/lib/validation';
+
+function generateSlug(title: string) {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')        
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +26,7 @@ export async function POST(request: Request) {
     const post = await prisma.post.create({
       data: {
         title: data.title,
-        slug: body.slug,
+        slug: generateSlug(data.title),
         author: data.author,
         content: data.content,
         excerpt: data.excerpt || data.content.slice(0, 100) + '...',
@@ -26,7 +36,7 @@ export async function POST(request: Request) {
             where: { name },
             create: { 
               name,
-              slug: name.toLowerCase().replace(/\s+/g, '-') 
+              slug: generateSlug(name) 
             },
           })),
         },

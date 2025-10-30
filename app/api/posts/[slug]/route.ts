@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/app/lib/prisma';
+import prisma from '@/lib/prisma';
 import { PostSchema } from '@/app/lib/validation';
 
 export async function GET(
+  _request: Request,
 {
   params,
 }: {

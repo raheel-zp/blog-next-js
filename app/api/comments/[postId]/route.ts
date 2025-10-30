@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/app/lib/prisma";
+import prisma from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  { params }: { params: { postId: string } }
+  {
+  params,
+}: {
+  params: Promise<{ postId: string }>;
+}
 ) {
   try {
-    const postId = Number(params.postId);
+    const { postId } = await params;
 
     const comments = await prisma.comment.findMany({
-      where: { postId },
+      where: { postId: +postId },
       include: {
         author: {
           select: { name: true, email: true },

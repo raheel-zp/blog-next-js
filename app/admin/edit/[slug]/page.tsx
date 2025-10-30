@@ -1,4 +1,4 @@
-import { prisma } from '@/app/lib/prisma';
+import prisma from '@/lib/prisma';
 import EditPostForm from '@/app/components/EditPostForm';
 
 export default async function EditPostPage(

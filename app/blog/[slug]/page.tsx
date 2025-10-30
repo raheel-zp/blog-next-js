@@ -1,4 +1,4 @@
-import { prisma } from "@/app/lib/prisma";
+import prisma from '@/lib/prisma';
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Comments from "./comments";
@@ -25,7 +25,7 @@ export default async function PostPage({
   return (
     <main className="max-w-3xl mx-auto p-6">
       <Image
-        src={post.image || "/placeholder.png"}
+        src={post.image || "/images/placeholder.png"}
         alt={post.title}
         width={800}
         height={400}
