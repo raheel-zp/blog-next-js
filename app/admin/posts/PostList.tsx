@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
-import { DeleteButton } from "../DeleteButton";
+import DeleteButton from "../DeleteButton";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface PostListProps {
     posts: {
@@ -16,10 +18,26 @@ interface PostListProps {
 }
 
 export default function PostList({ posts }: PostListProps) {
+    const [localPosts, setLocalPosts] = useState(posts);
+    const handleDelete = async (postId: number) => {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+
+        const res = await fetch(`/api/posts/by-id/${postId}`, {
+            method: 'DELETE',
+        });
+
+        if (res.ok) {
+            toast.success('Post deleted successfully!');
+            setLocalPosts(prev => prev.filter(p => p.id !== postId));
+        } else {
+            const data = await res.json();
+            toast.error(`Error: ${data.error || 'Failed to delete post'}`);
+        }
+    };
 
     return (
         <section className="space-y-8">
-            {posts.map((post) => (
+            {localPosts.map((post) => (
                 <div
                     key={post.id}
                     className="border rounded-lg p-4 bg-white shadow-sm transition hover:shadow-md"
@@ -56,7 +74,7 @@ export default function PostList({ posts }: PostListProps) {
                                 Edit
                             </Link>
 
-                            <DeleteButton postId={post.id} />
+                            <DeleteButton onClick={() => handleDelete(post.id)} />
                         </div>
                     </div>
 

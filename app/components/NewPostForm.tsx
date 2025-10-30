@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function NewPostForm() {
     const router = useRouter();
@@ -57,9 +58,8 @@ export default function NewPostForm() {
             const data = await res.json();
             console.log(data);
             const fieldErrors: Record<string, string> = {};
-            const err = data.errors ?? data; // fallback if API returned errors at root
+            const err = data.errors ?? data;
 
-            // Case A: fieldErrors object (most likely from zod.flatten().fieldErrors)
             if (err && typeof err === 'object' && !Array.isArray(err)) {
                 for (const [key, value] of Object.entries(err)) {
                     if (Array.isArray(value) && value.length > 0) {
@@ -76,7 +76,7 @@ export default function NewPostForm() {
         if (res.ok) {
             router.push('/admin');
         } else {
-            alert('Failed to create post');
+            toast.error('Failed to create post');
         }
 
         setIsSubmitting(false);
@@ -208,7 +208,6 @@ export default function NewPostForm() {
                         />
                     </div>
 
-                    {/* Suggestions dropdown */}
                     {suggestions.length > 0 && (
                         <div className="border border-gray-300 rounded mt-1 bg-white shadow-sm max-h-32 overflow-y-auto">
                             {suggestions.map((sug) => (

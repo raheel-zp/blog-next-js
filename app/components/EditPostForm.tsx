@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function EditPostForm({ post }: { post: any }) {
     const router = useRouter();
@@ -47,12 +48,12 @@ export default function EditPostForm({ post }: { post: any }) {
         });
 
         if (res.ok) {
-            alert('Post updated successfully!');
+            toast.success('Post updated successfully!');
             router.push('/admin');
             router.refresh();
         } else {
             const data = await res.json();
-            alert(`Failed: ${data.error || 'Unknown error'}`);
+            toast.error(`Failed: ${data.error || 'Unknown error'}`);
         }
     };
 
