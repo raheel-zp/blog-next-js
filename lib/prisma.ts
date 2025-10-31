@@ -1,64 +1,60 @@
-import { PrismaClient } from "@prisma/client"
-import slugify from "slugify"
+import { PrismaClient } from "@prisma/client";
+import slugify from "slugify";
 
-// 🔹 Utility function
+// --- util ---
 function createSlugFromTitle(title: string): string {
-  return slugify(title, { lower: true, strict: true })
+  return slugify(title, { lower: true, strict: true });
 }
 
-// 🔹 Prisma client factory with $extends
+// --- client factory ---
 function createPrismaClient() {
-  const prisma = new PrismaClient()
+  const prisma = new PrismaClient();
 
   return prisma.$extends({
     query: {
       post: {
-        // Let Prisma infer param types automatically
-        async create({ args, query }) {
-          const data = args.data as Record<string, unknown>
+        // use a loosely typed param and safely narrow inside
+        async create(params) {
+          const { args, query } = params as {
+            args: { data: { title?: string; slug?: string | null } };
+            query: (args: unknown) => unknown;
+          };
 
-          const title =
-            typeof data.title === "string"
-              ? data.title
-              : typeof (data.title as any)?.set === "string"
-              ? (data.title as any).set
-              : null
-
-          if (title && !data.slug) {
-            ;(data as any).slug = createSlugFromTitle(title)
+          const { title, slug } = args.data;
+          if (title && !slug) {
+            args.data.slug = createSlugFromTitle(title);
           }
 
-          return query(args)
+          return query(args);
         },
 
-        async update({ args, query }) {
-          const data = args.data as Record<string, unknown>
+        async update(params) {
+          const { args, query } = params as {
+            args: { data: { title?: string; slug?: string | null } };
+            query: (args: unknown) => unknown;
+          };
 
-          const title =
-            typeof data.title === "string"
-              ? data.title
-              : typeof (data.title as any)?.set === "string"
-              ? (data.title as any).set
-              : null
-
+          const { title } = args.data;
           if (title) {
-            ;(data as any).slug = createSlugFromTitle(title)
+            args.data.slug = createSlugFromTitle(title);
           }
 
-          return query(args)
+          return query(args);
         },
       },
     },
-  })
+  });
 }
 
-// 🔹 Global singleton to avoid multiple Prisma instances
-const globalForPrisma = globalThis as { prisma?: ReturnType<typeof createPrismaClient> }
+// --- singleton pattern for Next.js ---
+const globalForPrisma = globalThis as {
+  prisma?: ReturnType<typeof createPrismaClient>;
+};
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma
+  globalForPrisma.prisma = prisma;
 }
 
-export default prisma
+export default prisma;
