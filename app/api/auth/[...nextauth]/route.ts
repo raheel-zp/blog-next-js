@@ -1,12 +1,12 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@/lib/prisma";
+import { prismaPlain } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prismaPlain),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -18,7 +18,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password)
           throw new Error("Email and password are required");
 
-        const user = await prisma.user.findUnique({
+        const user = await prismaPlain.user.findUnique({
           where: { email: credentials.email },
         });
 
