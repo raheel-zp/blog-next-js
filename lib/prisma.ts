@@ -12,26 +12,18 @@ const prisma = (globalForPrisma.prisma ??
     query: {
       post: {
         async create({ args, query }) {
-          const title =
-            typeof args.data.title === "string"
-              ? args.data.title
-              : (args.data.title as any)?.set;
-
-          if (title && !args.data.slug) {
-            args.data.slug = createSlugFromTitle(title);
+          const data = args.data as { title?: string; slug?: string }
+          if (data.title && !data.slug) {
+            data.slug = createSlugFromTitle(data.title)
           }
 
           return query(args);
         },
 
         async update({ args, query }) {
-          const title =
-            typeof args.data.title === "string"
-              ? args.data.title
-              : (args.data.title as any)?.set;
-
-          if (title) {
-            args.data.slug = createSlugFromTitle(title);
+          const data = args.data as { title?: string; slug?: string }
+          if (data.title) {
+            data.slug = createSlugFromTitle(data.title)
           }
 
           return query(args);
