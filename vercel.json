@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "next.config.js",
-      "use": "@vercel/next"
-    }
-  ],
   "functions": {
     "api/**/*.js": {
       "includeFiles": "node_modules/.prisma/**"
@@ -18,6 +12,5 @@
     "DATABASE_URL": "@database_url"
   },
   "installCommand": "npm install",
-  "buildCommand": "npx prisma generate && npm run build",
-  "ignoreCommand": "echo 'No ignored files'"
+  "buildCommand": "npx prisma generate && npm run build"
 }
