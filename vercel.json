@@ -6,6 +6,9 @@
     },
     "app/api/**/*.js": {
       "includeFiles": "node_modules/.prisma/**"
+    },
+    ".next/server/app/**/*.js": {
+      "includeFiles": "node_modules/.prisma/**"
     }
   },
   "installCommand": "npm install",
