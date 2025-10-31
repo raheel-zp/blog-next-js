@@ -8,9 +8,6 @@
       "includeFiles": "node_modules/.prisma/**"
     }
   },
-  "env": {
-    "DATABASE_URL": "@database_url"
-  },
   "installCommand": "npm install",
   "buildCommand": "npx prisma generate && npm run build"
 }
