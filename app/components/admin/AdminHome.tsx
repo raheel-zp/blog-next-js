@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
-import PostList from './PostList';
+import PostList from '../PostList';
 export default function AdminHome() {
     const [posts, setPosts] = useState<any[]>([]);
     const [search, setSearch] = useState('');

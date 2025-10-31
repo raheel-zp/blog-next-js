@@ -5,16 +5,25 @@ import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
-export default function UserSidebar() {
+export default function Sidebar() {
     const { data: session } = useSession();
     const pathname = usePathname();
     const role = session?.user?.role;
 
     const menuItems = {
+        ADMIN: [
+            { label: "Dashboard", href: "/admin" },
+            { label: "Users", href: "/admin/users" },
+            { label: "Posts", href: "/admin/posts" },
+            { label: "Comments", href: "/admin/comments" },
+            { label: "Categories", href: "/admin/categories" },
+            { label: "Create Post", href: "/new" },
+            { label: "Settings", href: "/admin/settings" },
+        ],
         USER: [
-            { label: "My Posts", href: "/user" },
+            { label: "My Posts", href: "/user/dashboard" },
             { label: "Profile", href: "/user/profile" },
-            { label: "Create Post", href: "/user/new" },
+            { label: "Create Post", href: "/new" },
         ]
     };
 
@@ -22,7 +31,7 @@ export default function UserSidebar() {
 
     return (
         <aside className="w-64 bg-gray-900 text-white h-screen p-4">
-            <h2 className="text-lg font-semibold mb-6">User Panel</h2>
+            <h2 className="text-lg font-semibold mb-6">Admin Panel</h2>
             <nav className="space-y-2">
                 {links.map(({ label, href }) => (
                     <Link

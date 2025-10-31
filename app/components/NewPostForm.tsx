@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
-export default function NewPostForm() {
+export default function NewPostForm({ redirectUrl }: { redirectUrl: string }) {
     const { data: session } = useSession();
     const router = useRouter();
 
@@ -75,11 +75,7 @@ export default function NewPostForm() {
         }
 
         if (res.ok) {
-            if (session?.user?.role === "ADMIN") {
-                router.push("/admin");
-            } else {
-                router.push("/user");
-            }
+            router.push(redirectUrl);
         } else {
             toast.error('Failed to create post');
         }

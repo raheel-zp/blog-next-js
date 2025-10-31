@@ -17,12 +17,8 @@ export default function AdminSidebar() {
             { label: "Posts", href: "/admin/posts" },
             { label: "Comments", href: "/admin/comments" },
             { label: "Categories", href: "/admin/categories" },
+            { label: "Create Post", href: "admin/new" },
             { label: "Settings", href: "/admin/settings" },
-        ],
-        USER: [
-            { label: "My Posts", href: "/user/dashboard" },
-            { label: "Profile", href: "/user/profile" },
-            { label: "Create Post", href: "/admin/new" },
         ]
     };
 

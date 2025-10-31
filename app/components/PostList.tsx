@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import DeleteButton from "../../admin/DeleteButton";
+import DeleteButton from "../admin/DeleteButton";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Comment } from "@/types/comment";

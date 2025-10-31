@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import Sidebar from "./components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +18,8 @@ export default function RootLayout({
       <body>
         <SessionProvider>
           <Navbar />
-          <Toaster position="top-right" />
           <main>{children}</main>
+          <Toaster position="top-right" />
         </SessionProvider>
       </body>
     </html>
