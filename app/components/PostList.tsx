@@ -24,7 +24,7 @@ export default function PostList({ posts }: PostListProps) {
     const handleDelete = async (postId: number) => {
         if (!confirm('Are you sure you want to delete this post?')) return;
 
-        const res = await fetch(`/api/posts/by-id/${postId}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/by-id/${postId}`, {
             method: 'DELETE',
         });
 

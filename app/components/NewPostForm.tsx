@@ -50,7 +50,7 @@ export default function NewPostForm({ redirectUrl }: { redirectUrl: string }) {
         e.preventDefault();
         setErrors({});
         setIsSubmitting(true);
-        const res = await fetch('/api/posts/create', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData),

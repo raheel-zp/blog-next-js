@@ -17,7 +17,7 @@ export default function UserHome({ user }: UserHomeProps) {
     const fetchPosts = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/posts/user/${user.id}/?search=${encodeURIComponent(search)}&sort=${sort}&page=${page}&category=${selectedCategory}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/user/${user.id}/?search=${encodeURIComponent(search)}&sort=${sort}&page=${page}&category=${selectedCategory}`);
             const data = await res.json();
             setPosts(data.posts);
             setTotalPages(data.totalPages);

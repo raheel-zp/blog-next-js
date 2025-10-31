@@ -41,7 +41,7 @@ export default function EditPostForm({ post }: { post: any }) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const res = await fetch(`/api/posts/${post.slug}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.slug}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ...formData, categories: selectedCategories }),

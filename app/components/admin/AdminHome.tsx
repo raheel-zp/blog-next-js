@@ -14,7 +14,7 @@ export default function AdminHome() {
     const fetchPosts = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/posts?search=${encodeURIComponent(search)}&sort=${sort}&page=${page}&category=${selectedCategory}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts?search=${encodeURIComponent(search)}&sort=${sort}&page=${page}&category=${selectedCategory}`);
             const data = await res.json();
             setPosts(data.posts);
             setTotalPages(data.totalPages);
