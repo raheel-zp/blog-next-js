@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "next.config.js",
+      "use": "@vercel/next"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": [
+        "node_modules/.prisma/**",
+        "node_modules/@prisma/client/**"
+      ]
+    },
+    "api/**/*.ts": {
+      "includeFiles": [
+        "node_modules/.prisma/**",
+        "node_modules/@prisma/client/**"
+      ]
+    }
+  },
+  "env": {
+    "DATABASE_URL": "@database_url"
+  },
+  "ignoreCommand": "echo 'No ignored files'",
+  "installCommand": "npm install",
+  "buildCommand": "npx prisma generate && npm run build"
+}
