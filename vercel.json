@@ -8,22 +8,16 @@
   ],
   "functions": {
     "api/**/*.js": {
-      "includeFiles": [
-        "node_modules/.prisma/**",
-        "node_modules/@prisma/client/**"
-      ]
+      "includeFiles": "node_modules/.prisma/**"
     },
     "api/**/*.ts": {
-      "includeFiles": [
-        "node_modules/.prisma/**",
-        "node_modules/@prisma/client/**"
-      ]
+      "includeFiles": "node_modules/.prisma/**"
     }
   },
   "env": {
     "DATABASE_URL": "@database_url"
   },
-  "ignoreCommand": "echo 'No ignored files'",
   "installCommand": "npm install",
-  "buildCommand": "npx prisma generate && npm run build"
+  "buildCommand": "npx prisma generate && npm run build",
+  "ignoreCommand": "echo 'No ignored files'"
 }
