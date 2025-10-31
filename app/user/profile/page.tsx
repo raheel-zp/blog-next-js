@@ -47,7 +47,7 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-6">
+        <div className="min-h-screen bg-linear-to-b from-gray-50 to-gray-100 flex items-center justify-center p-6">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6 border border-gray-100">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-semibold text-gray-800">User Profile</h2>
@@ -57,7 +57,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="flex flex-col items-center text-center space-y-4 mt-6">
-                    <div className="w-24 h-24 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-md">
+                    <div className="w-24 h-24 bg-linear-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-md">
                         {user.name.charAt(0).toUpperCase()}
                     </div>
 
