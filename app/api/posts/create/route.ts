@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { PostSchema } from '@/app/lib/validation';
+import { getServerSession } from "next-auth";
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 function generateSlug(title: string) {
   return title
@@ -14,6 +16,10 @@ function generateSlug(title: string) {
 
 export async function POST(request: Request) {
   try {
+     const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const parseResult = PostSchema.safeParse(body);
     if (!parseResult.success) {
@@ -30,6 +36,7 @@ export async function POST(request: Request) {
         author: data.author,
         content: data.content,
         excerpt: data.excerpt || data.content.slice(0, 100) + '...',
+        userId: session?.user.id,
         date: new Date(),
         categories: {
           connectOrCreate: (data.categories || []).map((name: string) => ({

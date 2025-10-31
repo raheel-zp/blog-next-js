@@ -49,8 +49,7 @@ export default function EditPostForm({ post }: { post: any }) {
 
         if (res.ok) {
             toast.success('Post updated successfully!');
-            router.push('/admin');
-            router.refresh();
+            router.back();
         } else {
             const data = await res.json();
             toast.error(`Failed: ${data.error || 'Unknown error'}`);

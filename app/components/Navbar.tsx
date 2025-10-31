@@ -18,24 +18,8 @@ export default function Navbar() {
             <Link href="/" className="text-xl font-bold">Blog Explorer</Link>
 
             <div className="space-x-4">
-                <Link href="/" className="hover:underline">Blog</Link>
-
                 {!session && (
                     <Link href="/login" className="hover:underline">Login</Link>
-                )}
-
-                {session?.user?.role === 'ADMIN' && (
-                    <>
-                        <Link href="/admin" className="hover:underline">Admin Dashboard</Link>
-                        <Link href="/admin/users" className="hover:underline">
-                            Manage Users
-                        </Link>
-                        <Link href="/admin/new" className="hover:underline">New Post</Link>
-                    </>
-                )}
-
-                {session?.user?.role === 'USER' && (
-                    <Link href="/user/dashboard" className="hover:underline">My Dashboard</Link>
                 )}
 
                 {session && (

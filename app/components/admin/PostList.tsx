@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
-import DeleteButton from "../DeleteButton";
+import DeleteButton from "../../admin/DeleteButton";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Comment } from "@/types/comment";
+import { Category } from "@/types/category";
 
 interface PostListProps {
     posts: {
@@ -12,8 +14,8 @@ interface PostListProps {
         excerpt: string;
         author: string;
         date: Date;
-        comments: { id: number; name: string; text: string; createdAt: Date }[];
-        categories: { id: number; name: string; }[];
+        comments: Comment[];
+        categories: Category[];
     }[];
 }
 
@@ -92,7 +94,7 @@ export default function PostList({ posts }: PostListProps) {
                                         className="border-l pl-3 text-sm text-gray-700"
                                     >
                                         <p>
-                                            <span className="font-semibold">{c.name}:</span> {c.text}
+                                            <span className="font-semibold">{c.author.name}:</span> {c.content}
                                         </p>
                                         <p className="text-xs text-gray-500">
                                             {new Date(c.createdAt).toLocaleString()}

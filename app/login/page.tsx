@@ -28,14 +28,14 @@ export default function LoginPage() {
             if (session?.user?.role === "ADMIN") {
                 router.push("/admin");
             } else {
-                router.push("/user/dashboard");
+                router.push("/user");
             }
         }
     };
 
     return (
         <main className="max-w-md mx-auto p-6">
-            <h1 className="text-3xl font-bold mb-6 text-center">Admin Login</h1>
+            <h1 className="text-3xl font-bold mb-6 text-center">User Login</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                     type="email"

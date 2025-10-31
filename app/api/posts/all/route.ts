@@ -3,46 +3,18 @@ import prisma from '@/lib/prisma';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-
-  const search = searchParams.get('search')?.trim() || '';
-  const category = searchParams.get('category');
-  const sort = searchParams.get('sort') === 'asc' ? 'asc' : 'desc';
   const page = parseInt(searchParams.get('page') || '1');
   const limit = 5;
   const skip = (page - 1) * limit;
   
   const where: any = {};
 
-    if (search) {
-      where.OR = [
-        { title: { contains: search, lte: 'insensitive' } },
-        { excerpt: { contains: search, lte: 'insensitive' } },
-        { author: { contains: search, lte: 'insensitive' } },
-      ];
-    }
-
-    if (category && category !== 'all') {
-      where.categories = {
-        some: { name: category },
-      };
-    }
-
   try {
     const [posts, total] = await Promise.all([
       prisma.post.findMany({
         where,
-        orderBy: { date: sort },
         include: {
-        comments: {
-        include: {
-          author: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
+        comments: true,
         categories: true,
       },
         skip,

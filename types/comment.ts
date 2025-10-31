@@ -1,12 +1,16 @@
+
+export interface CommentAuthor {
+  id: number;
+  name: string;
+}
+
 export interface Comment {
   id: number;
   content: string;
   createdAt: Date;
   postId: number;
   authorId: number;
-  author: {
-    name: string | null;
-  };
+  author: CommentAuthor;
 }
 
 export interface CommentFormData {

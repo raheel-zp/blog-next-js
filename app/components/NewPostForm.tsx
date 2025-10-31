@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
 
 export default function NewPostForm() {
+    const { data: session } = useSession();
     const router = useRouter();
 
     const [formData, setFormData] = useState({
@@ -56,7 +58,6 @@ export default function NewPostForm() {
 
         if (res.status === 400) {
             const data = await res.json();
-            console.log(data);
             const fieldErrors: Record<string, string> = {};
             const err = data.errors ?? data;
 
@@ -74,7 +75,11 @@ export default function NewPostForm() {
         }
 
         if (res.ok) {
-            router.push('/admin');
+            if (session?.user?.role === "ADMIN") {
+                router.push("/admin");
+            } else {
+                router.push("/user");
+            }
         } else {
             toast.error('Failed to create post');
         }

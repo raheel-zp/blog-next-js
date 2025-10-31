@@ -29,3 +29,19 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const comments = await prisma.comment.findMany({
+      orderBy: { createdAt: 'asc' },
+      include: {
+        post: true,
+        author: true,
+      },
+    });
+    return NextResponse.json(comments);
+  } catch (error) {
+    console.error('Failed to load categories:', error);
+    return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 });
+  }
+}
