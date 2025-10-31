@@ -4,7 +4,7 @@
   "private": true,
  "scripts": {
   "dev": "next dev",
-  "build": "npx prisma generate && next build && cp -r node_modules/.prisma .next/server/",
+  "build": "npx prisma generate && next build && mkdir -p .next/server && cp -r node_modules/.prisma .next/server/.prisma",
   "start": "next start",
   "postinstall": "npx prisma generate"
 },
