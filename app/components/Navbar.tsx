@@ -15,9 +15,16 @@ export default function Navbar() {
 
     return (
         <nav className="bg-gray-900 text-white px-6 py-3 flex justify-between items-center">
-            <Link href="/" className="text-xl font-bold">Blog Explorer</Link>
-
+            <div className="space-x-4 mr-0">
+                <Link href="/" className="text-xl font-bold">Blog Explorer</Link>
+            </div>
             <div className="space-x-4">
+                <Link href="/blog" className="hover:underline">
+                    Blog
+                </Link>
+                <Link href="/categories" className="hover:underline">
+                    Categories
+                </Link>
                 {!session && (
                     <Link href="/login" className="hover:underline">Login</Link>
                 )}

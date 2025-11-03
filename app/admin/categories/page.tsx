@@ -1,89 +1,126 @@
 "use client";
 
 import useSWR from "swr";
-import Link from "next/link";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function AdminCategoriesPage() {
-    const { data, error, mutate } = useSWR("/api/categories", fetcher);
-    const [loadingId, setLoadingId] = useState<number | null>(null);
+    const { data: categories, mutate } = useSWR("/api/categories", fetcher);
+    const [name, setName] = useState("");
+    const [editing, setEditing] = useState<number | null>(null);
 
-    const categories = data;
-
-    if (error) return <p className="text-red-600">Failed to load categories.</p>;
-    if (!categories) return <p>Loading categories...</p>;
-
-    const handleDelete = async (id: number) => {
-        if (!confirm("Are you sure you want to delete this category?")) return;
-
-        setLoadingId(id);
-        try {
-            const res = await fetch(`/api/categories/by-id/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error("Failed to delete category");
-            toast.success("Category deleted successfully!");
+    const handleAdd = async () => {
+        if (!name.trim()) return toast.error("Category name is required");
+        const res = await fetch("/api/categories", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name }),
+        });
+        if (res.ok) {
+            toast.success("Category added");
+            setName("");
             mutate();
-        } catch (err) {
-            toast.error("Error deleting category");
-        } finally {
-            setLoadingId(null);
-        }
+        } else toast.error("Failed to add category");
     };
 
+    const handleEdit = async (id: number, currentName: string) => {
+        setEditing(id);
+        setName(currentName);
+    };
+
+    const handleUpdate = async (id: number) => {
+        if (!name.trim()) return toast.error("Name cannot be empty");
+        const res = await fetch(`/api/categories/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name }),
+        });
+        if (res.ok) {
+            toast.success("Category updated");
+            setEditing(null);
+            setName("");
+            mutate();
+        } else toast.error("Failed to update");
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm("Delete this category?")) return;
+        const res = await fetch(`/api/categories/${id}`, { method: "DELETE" });
+        if (res.ok) {
+            toast.success("Category deleted");
+            mutate();
+        } else toast.error("Failed to delete");
+    };
+
+    if (!categories) return <p className="p-6">Loading...</p>;
+
     return (
-        <main className="max-w-6xl mx-auto p-6">
-            <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold">Manage Categories</h1>
-                <Link
-                    href="/admin/categories/new"
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                >
-                    + New Category
-                </Link>
+        <main className="max-w-3xl mx-auto p-6">
+            <h1 className="text-2xl font-bold mb-6">Manage Categories</h1>
+
+            <div className="flex items-center gap-2 mb-6">
+                <input
+                    type="text"
+                    placeholder="Enter category name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="border rounded-lg px-3 py-2 w-full"
+                />
+                {editing ? (
+                    <button
+                        onClick={() => handleUpdate(editing)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+                    >
+                        Update
+                    </button>
+                ) : (
+                    <button
+                        onClick={handleAdd}
+                        className="bg-green-600 text-white px-4 py-2 rounded-lg"
+                    >
+                        Add
+                    </button>
+                )}
             </div>
 
-            <table className="w-full border-collapse border border-gray-300 text-sm">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th className="border px-4 py-2 text-left">Name</th>
-                        <th className="border px-4 py-2 text-left">Slug</th>
-                        <th className="border px-4 py-2 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categories.length > 0 ? (
-                        categories.map((cat: any) => (
-                            <tr key={cat.id} className="hover:bg-gray-50">
-                                <td className="border px-4 py-2">{cat.name}</td>
-                                <td className="border px-4 py-2">{cat.slug}</td>
-                                <td className="border px-4 py-2 space-x-2">
-                                    <Link
-                                        href={`/admin/categories/${cat.id}/edit`}
-                                        className="text-blue-600 hover:underline"
-                                    >
-                                        Edit
-                                    </Link>
-                                    <button
-                                        onClick={() => handleDelete(cat.id)}
-                                        disabled={loadingId === cat.id}
-                                        className="text-red-600 hover:underline disabled:opacity-50"
-                                    >
-                                        {loadingId === cat.id ? "Deleting..." : "Delete"}
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={3} className="text-center py-4">
-                                No categories found.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+            <ul className="space-y-2">
+                {categories.map((cat: any) => (
+                    <li
+                        key={cat.id}
+                        className="flex items-center justify-between border p-3 rounded-lg"
+                    >
+                        <div>
+                            <span className="font-semibold">{cat.name}</span>
+                            <span className="text-sm text-gray-500 ml-2">
+                                ({cat._count?.posts ?? 0} posts)
+                            </span>
+                        </div>
+                        <div className="flex gap-2">
+                            <Link
+                                href={`/categories/${cat.slug}`}
+                                className=" text-blue-600 px-3 py-1"
+                            >
+                                View
+                            </Link>
+                            <Link
+                                href={`/admin/categories/${cat.id}/edit`}
+                                className=" text-blue-600 px-3 py-1"
+                            >
+                                Edit
+                            </Link>
+                            <button
+                                onClick={() => handleDelete(cat.id)}
+                                className="text-red-600 hover:underline"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </li>
+                ))}
+            </ul>
         </main>
     );
 }

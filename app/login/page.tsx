@@ -4,8 +4,22 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function LoginPage() {
+
+    const { data: session } = useSession();
+
+    // Redirect if user is not admin
+    if (session?.user.role === "ADMIN") {
+        redirect("/admin");
+    }
+
+    if (session?.user.role === "USER") {
+        redirect("/user");
+    }
+
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

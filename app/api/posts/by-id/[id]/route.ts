@@ -27,3 +27,25 @@ export async function DELETE(
     return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });
   }
 }
+
+export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id: Number(params.id) },
+      include: {
+        User: {
+          select: { name: true, email: true },
+        },
+      },
+    });
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ post });
+  } catch (error) {
+    console.error("GET /api/posts/by-id error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}

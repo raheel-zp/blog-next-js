@@ -14,6 +14,7 @@ model Post {
   excerpt    String
   image      String?
   date       DateTime   @default(now())
+  status     String?
   author     String
   content    String
   comments   Comment[]
