@@ -28,10 +28,15 @@ export async function DELETE(
   }
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, {
+    params,
+  }: {
+    params: Promise<{ id: string }>;
+  }) {
   try {
+    const {id} = await params;
     const post = await prisma.post.findUnique({
-      where: { id: Number(params.id) },
+      where: { id: Number(id) },
       include: {
         User: {
           select: { name: true, email: true },

@@ -2,29 +2,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Post } from "@/types/post";
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 
 export default function PostsClient() {
-    const queryClient = useQueryClient();
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['posts'],
         queryFn: () => fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`).then(res => res.json()),
     })
-
-    const mutation = useMutation({
-        mutationFn: (newPost: { title: string; body: string }) =>
-            fetch('/api/posts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newPost),
-            }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['posts'] })
-        },
-    })
-
-    const [loading, setLoading] = useState(false);
 
     if (isLoading) return <div>Loading...</div>
     if (error) return <div>Error loading posts</div>

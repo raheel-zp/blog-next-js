@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import toast from 'react-hot-toast';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 export default function NewPostForm({ redirectUrl }: { redirectUrl: string }) {
-    const { data: session } = useSession();
-    const router = useRouter();
+    const queryClient = useQueryClient();
 
+
+    const router = useRouter();
     const [formData, setFormData] = useState({
         title: '',
         excerpt: '',
@@ -16,6 +18,58 @@ export default function NewPostForm({ redirectUrl }: { redirectUrl: string }) {
         author: '',
         slug: '',
         categories: [] as string[],
+    });
+
+    const mutation = useMutation({
+        mutationFn: async (newPost: {
+            title: string;
+            excerpt: string;
+            content: string;
+            author: string;
+            slug: string;
+            categories: string[],
+        }) => {
+            const res = await fetch('/api/posts/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPost),
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || 'Failed to create post');
+            }
+            return data;
+        },
+
+        onSuccess: (data) => {
+            if (data.errors) {
+                const fieldErrors: Record<string, string> = {};
+                const err = data.errors;
+
+                if (err && typeof err === 'object' && !Array.isArray(err)) {
+                    for (const [key, value] of Object.entries(err)) {
+                        if (Array.isArray(value) && value.length > 0) {
+                            fieldErrors[key] = String(value[0]);
+                        } else if (value) {
+                            fieldErrors[key] = String(value);
+                        }
+                    }
+                }
+                setErrors(fieldErrors);
+                setIsSubmitting(false);
+            } else {
+                queryClient.invalidateQueries({ queryKey: ['posts'] });
+                toast.success('Post created successfully!');
+                router.push(redirectUrl);
+            }
+        },
+
+        onError: (error: any) => {
+            toast.error('Failed to create post');
+            console.error('Mutation error:', error);
+            setIsSubmitting(false);
+        },
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({})
@@ -50,36 +104,7 @@ export default function NewPostForm({ redirectUrl }: { redirectUrl: string }) {
         e.preventDefault();
         setErrors({});
         setIsSubmitting(true);
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/create`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-        });
-
-        if (res.status === 400) {
-            const data = await res.json();
-            const fieldErrors: Record<string, string> = {};
-            const err = data.errors ?? data;
-
-            if (err && typeof err === 'object' && !Array.isArray(err)) {
-                for (const [key, value] of Object.entries(err)) {
-                    if (Array.isArray(value) && value.length > 0) {
-                        fieldErrors[key] = String(value[0]);
-                    } else if (value) {
-                        fieldErrors[key] = String(value);
-                    }
-                }
-            }
-            setErrors(fieldErrors);
-            return;
-        }
-
-        if (res.ok) {
-            router.push(redirectUrl);
-        } else {
-            toast.error('Failed to create post');
-        }
-
+        mutation.mutate(formData);
         setIsSubmitting(false);
     };
 
